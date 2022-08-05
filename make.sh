@@ -6,7 +6,8 @@
 #
 
 set -e
-JOB=`sed -n "N;/processor/p" /proc/cpuinfo|wc -l`
+#JOB=`sed -n "N;/processor/p" /proc/cpuinfo|wc -l`
+JOB=8
 SUPPORT_LIST=`ls configs/*[r,p][x,v,k][0-9][0-9]*_defconfig`
 CMD_ARGS=$1
 
@@ -15,14 +16,20 @@ CMD_ARGS=$1
 RKBIN_TOOLS=../rkbin/tools
 
 # User's GCC toolchain and relative path
-ADDR2LINE_ARM32=arm-linux-gnueabihf-addr2line
-ADDR2LINE_ARM64=aarch64-linux-gnu-addr2line
-OBJ_ARM32=arm-linux-gnueabihf-objdump
-OBJ_ARM64=aarch64-linux-gnu-objdump
-NM_ARM32=arm-linux-gnueabihf-nm
-NM_ARM64=aarch64-linux-gnu-nm
-GCC_ARM32=arm-linux-gnueabihf-
-GCC_ARM64=aarch64-linux-gnu-
+CROSS_COMPILE_32=arm-linux-gnueabihf
+CROSS_COMPILE_64=aarch64-none-elf
+#CROSS_COMPILE=arm-linux-gnueabihf
+
+ADDR2LINE_ARM32=${CROSS_COMPILE_32}-addr2line
+ADDR2LINE_ARM64=${CROSS_COMPILE_64}-addr2line
+OBJ_ARM32=${CROSS_COMPILE_32}-objdump
+OBJ_ARM64=${CROSS_COMPILE_64}-objdump
+NM_ARM32=${CROSS_COMPILE_32}-nm
+NM_ARM64=${CROSS_COMPILE_64}-nm
+GCC_ARM32=${CROSS_COMPILE_32}-
+GCC_ARM64=${CROSS_COMPILE_64}-
+TOOLCHAIN_ARM32=/usr/local/bin/
+TOOLCHAIN_ARM64=/usr/local/bin/
 TOOLCHAIN_ARM32=../prebuilts/gcc/linux-x86/arm/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin
 TOOLCHAIN_ARM64=../prebuilts/gcc/linux-x86/aarch64/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu/bin
 
@@ -497,7 +504,7 @@ function pack_idblock()
 	fi
 
 	# pack
-	rm idblock.bin -f
+	rm -f idblock.bin
 	./tools/mkimage -n ${PLAT} -T rksd -d ${TPL_BIN}:${SPL_BIN} idblock.bin
 	echo "Input:"
 	echo "    ${INI}"
@@ -519,7 +526,7 @@ function pack_uboot_itb_image()
 	if [ "${ARM64_TRUSTZONE}" == "y" ]; then
 		BL31_ELF=`sed -n '/_bl31_/s/PATH=//p' ${INI} | tr -d '\r'`
 		BL32_BIN=`sed -n '/_bl32_/s/PATH=//p' ${INI} | tr -d '\r'`
-		rm bl31.elf tee.bin -rf
+		rm -rf bl31.elf tee.bin
 		cp ${RKBIN}/${BL31_ELF} bl31.elf
 		if grep BL32_OPTION -A 1 ${INI} | grep SEC=1 ; then
 			cp ${RKBIN}/${BL32_BIN} tee.bin
@@ -578,7 +585,7 @@ function pack_uboot_itb_image()
 		if [[ ${SPL_FIT_GENERATOR} == *.py ]]; then
 			${SPL_FIT_GENERATOR} u-boot.dtb > u-boot.its
 		else
-			${SPL_FIT_GENERATOR} ${TEE_ARG} ${COMPRESSION_ARG} ${MCU_ARG} > u-boot.its
+			echo ${SPL_FIT_GENERATOR} ${TEE_ARG} ${COMPRESSION_ARG} ${MCU_ARG} > u-boot.its
 		fi
 	fi
 
@@ -589,7 +596,7 @@ function pack_uboot_itb_image()
 
 function pack_spl_loader_image()
 {
-	rm *_loader_*.bin -f
+	rm -f *_loader_*.bin
 	cd ${RKBIN}
 	if [ ! -z "${ARG_SPL_BIN}" -a ! -z "${ARG_TPL_BIN}" ]; then
 		${SCRIPT_SPL} --ini ${INI_LOADER} --tpl ${SRCTREE}/${ARG_TPL_BIN} --spl ${SRCTREE}/${ARG_SPL_BIN}
@@ -606,7 +613,7 @@ function pack_spl_loader_image()
 
 function pack_uboot_image()
 {
-	rm u-boot.img u-boot-dtb.img -f
+	rm -f u-boot.img u-boot-dtb.img
 	LOAD_ADDR=`sed -n "/CONFIG_SYS_TEXT_BASE=/s/CONFIG_SYS_TEXT_BASE=//p" include/autoconf.mk|tr -d '\r'`
 	if [ -z "${LOAD_ADDR}" ]; then
 		# upstream U-Boot
@@ -623,7 +630,7 @@ function pack_uboot_image()
 
 function pack_loader_image()
 {
-	rm *_loader_*.bin -f
+	rm -f *_loader_*.bin
 	cd ${RKBIN}
 	${SCRIPT_LOADER} --ini ${INI_LOADER}
 	cd -
@@ -636,7 +643,7 @@ function pack_trust_image()
 {
 	DRAM_BASE=`sed -n "/CONFIG_SYS_SDRAM_BASE=/s/CONFIG_SYS_SDRAM_BASE=//p" include/autoconf.mk|tr -d '\r'`
 
-	rm trust*.img -f
+	rm -f trust*.img
 	cd ${RKBIN}
 	if [ "${ARM64_TRUSTZONE}" == "y" ]; then
 		${SCRIPT_ATF} --ini ${INI_TRUST} ${PLAT_SHA} ${PLAT_RSA} ${PLAT_TRUST_SIZE}
@@ -659,14 +666,14 @@ function pack_fit_image()
 
 	# If we don't plan to have uboot in uboot.img in case of: SPL => Trust => Kernel, creating empty files.
 	if [ "${ARG_NO_UBOOT}" == "y" ]; then
-		rm u-boot-nodtb.bin u-boot.dtb -f
+		rm -f u-boot-nodtb.bin u-boot.dtb
 		touch u-boot-nodtb.bin u-boot.dtb
 	fi
 
-	rm uboot.img trust*.img -rf
+	rm -rf uboot.img trust*.img
 	${SCRIPT_FIT} ${ARG_LIST_FIT} --chip ${RKCHIP_LABEL}
 
-	rm ${REP_DIR} -rf
+	rm -rf ${REP_DIR}
 	echo "pack uboot.img okay! Input: ${INI_TRUST}"
 }
 
@@ -677,8 +684,8 @@ function handle_args_late()
 
 function clean_files()
 {
-	rm spl/u-boot-spl.dtb tpl/u-boot-tpl.dtb u-boot.dtb -f
-	rm spl/u-boot-spl tpl/u-boot-tpl u-boot -f
+	rm -f spl/u-boot-spl.dtb tpl/u-boot-tpl.dtb u-boot.dtb
+	rm -f spl/u-boot-spl tpl/u-boot-tpl u-boot
 }
 
 function pack_images()

@@ -263,11 +263,12 @@ int init_kernel_dtb(void)
 		return -ENODEV;
 	}
 
+printf("%s %d\n", __func__,__LINE__);
 	if (IS_ENABLED(CONFIG_EMBED_KERNEL_DTB_ALWAYS)) {
 		printf("Always embed kernel dtb\n");
 		goto dtb_embed;
 	}
-
+printf("%s %d\n", __func__,__LINE__);
 	ret = rockchip_read_dtb_file((void *)fdt_addr);
 	if (!ret) {
 		if (!dtb_check_ok((void *)fdt_addr, (void *)gd->fdt_blob)) {
@@ -278,6 +279,7 @@ int init_kernel_dtb(void)
 		}
 	}
 
+printf("%s %d\n", __func__,__LINE__);
 dtb_embed:
 	if (!fdt_check_header(gd->fdt_blob_kern)) {
 		if (!dtb_check_ok((void *)gd->fdt_blob_kern, (void *)gd->fdt_blob)) {
@@ -285,11 +287,13 @@ dtb_embed:
 			return -EINVAL;
 		}
 
+printf("%s %d\n", __func__,__LINE__);
 		fdt_addr = (ulong)memalign(ARCH_DMA_MINALIGN,
 				fdt_totalsize(gd->fdt_blob_kern));
 		if (!fdt_addr)
 			return -ENOMEM;
 
+printf("%s %d\n", __func__,__LINE__);
 		/*
 		 * Alloc another space for this embed kernel dtb.
 		 * Because "fdt_addr_r" *MUST* be the fdt passed to kernel.
@@ -299,11 +303,13 @@ dtb_embed:
 		printf("DTB: %s\n", CONFIG_EMBED_KERNEL_DTB_PATH);
 	}
 
+printf("%s %d\n", __func__,__LINE__);
 	if (fdt_check_header((void *)fdt_addr)) {
 		printf("Failed to get kernel dtb, ret=%d\n", ret);
 		return ret;
 	}
 
+printf("%s %d\n", __func__,__LINE__);
 dtb_okay:
 	ufdt_blob = (void *)gd->fdt_blob;
 	gd->fdt_blob = (void *)fdt_addr;

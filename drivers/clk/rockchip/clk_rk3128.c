@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier:	GPL-2.0
  */
-
+#define DEBUG
 #include <common.h>
 #include <clk-uclass.h>
 #include <dm.h>
@@ -236,6 +236,7 @@ static ulong rk3128_peri_get_clk(struct rk3128_clk_priv *priv, ulong clk_id)
 	case PCLK_I2C1:
 	case PCLK_I2C2:
 	case PCLK_I2C3:
+	case PCLK_SPI0:
 	case PCLK_PWM:
 	case PCLK_WDT:
 		con = readl(&cru->cru_clksel_con[10]);
@@ -274,6 +275,7 @@ static ulong rk3128_peri_set_clk(struct rk3128_clk_priv *priv,
 	case PCLK_I2C1:
 	case PCLK_I2C2:
 	case PCLK_I2C3:
+	case PCLK_SPI0:
 	case PCLK_PWM:
 	case PCLK_PERI:
 		src_clk_div = DIV_ROUND_UP(rk3128_peri_get_clk(priv,
@@ -558,6 +560,7 @@ static ulong rk3128_clk_get_rate(struct clk *clk)
 	case PCLK_I2C1:
 	case PCLK_I2C2:
 	case PCLK_I2C3:
+	case PCLK_SPI0:
 	case PCLK_PWM:
 	case PCLK_WDT:
 		rate = rk3128_peri_get_clk(priv, clk->id);
@@ -594,7 +597,7 @@ static ulong rk3128_clk_set_rate(struct clk *clk, ulong rate)
 {
 	struct rk3128_clk_priv *priv = dev_get_priv(clk->dev);
 	ulong ret = 0;
-
+	printf("rk3128_clk_set_rate id:%ld rate:%ld\n", clk->id, rate);
 	switch (clk->id) {
 	case PLL_APLL:
 	case PLL_DPLL:
@@ -629,6 +632,7 @@ static ulong rk3128_clk_set_rate(struct clk *clk, ulong rate)
 	case PCLK_I2C1:
 	case PCLK_I2C2:
 	case PCLK_I2C3:
+	case PCLK_SPI0:
 	case PCLK_PWM:
 		ret = rk3128_peri_set_clk(priv, clk->id, rate);
 		break;
@@ -657,6 +661,7 @@ static ulong rk3128_clk_set_rate(struct clk *clk, ulong rate)
 	default:
 		return -ENOENT;
 	}
+	printf("%ld\n", ret);
 	return ret;
 }
 

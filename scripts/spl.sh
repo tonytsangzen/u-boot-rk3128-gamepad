@@ -51,7 +51,7 @@ if [ "${TPL_BIN}" == "" -a "${SPL_BIN}" == "" ]; then
 	exit 0
 fi
 
-rm tmp -rf && mkdir tmp -p
+rm tmp -rf && mkdir -p tmp
 TMP_INI="tmp/MINIALL.ini"
 cp ${INI} ${TMP_INI}
 
@@ -100,14 +100,14 @@ else
 	LABEL="SPL"
 fi
 
-rm *_loader_*.bin -f
+rm -f *_loader_*.bin
 ./tools/boot_merger ${TMP_INI}
 
 FNAME=`basename *_loader_*.bin`
 if [[ ${FNAME} != *spl* ]]; then
 	rename 's/loader_/spl_loader_/' *_loader_*.bin
 fi
-rm tmp/ -rf
+rm -rf tmp/
 
 echo "pack loader(${LABEL}) okay! Input: ${INI}"
 echo

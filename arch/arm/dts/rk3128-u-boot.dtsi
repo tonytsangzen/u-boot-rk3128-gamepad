@@ -11,7 +11,7 @@
 	};
 
 	chosen {
-		stdout-path = &uart2;
+		stdout-path = &uart0;
 	};
 };
 
@@ -24,16 +24,6 @@
 	u-boot,dm-pre-reloc;
 };
 
-&nandc {
-	u-boot,dm-pre-reloc;
-	status = "okay";
-};
-
-&emmc {
-	u-boot,dm-pre-reloc;
-	status = "okay";
-};
-
 &grf {
 	u-boot,dm-pre-reloc;
 };
@@ -42,12 +32,7 @@
 	u-boot,dm-pre-reloc;
 };
 
-&uart1 {
-	clock-frequency = <24000000>;
-	u-boot,dm-pre-reloc;
-};
-
-&uart2 {
+&uart0 {
 	u-boot,dm-pre-reloc;
 	clock-frequency = <24000000>;
 };

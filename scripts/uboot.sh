@@ -29,7 +29,7 @@ while [ $# -gt 0 ]; do
 	esac
 done
 
-rm uboot.img -f
+rm -f uboot.img
 
 if [ -z "${LOAD_ADDR}" ]; then
 	echo "ERROR: No load address"

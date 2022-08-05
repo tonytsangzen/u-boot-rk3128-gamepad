@@ -752,7 +752,7 @@ static void vendor_test_reset(void)
  */
 int vendor_storage_test(void)
 {
-	u16 id, size, j, item_num;
+	u16 id, size, j, item_num = 0;
 	u32 total_size;
 	u8 *buffer = NULL;
 	int ret = 0;

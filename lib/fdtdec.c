@@ -1263,11 +1263,14 @@ static int uncompress_blob(const void *src, ulong sz_src, void **dstp)
 
 int fdtdec_setup(void)
 {
+printf("%s %d\n", __func__, __LINE__);
 #if CONFIG_IS_ENABLED(OF_CONTROL)
+printf("%s %d\n", __func__, __LINE__);
 # if CONFIG_IS_ENABLED(MULTI_DTB_FIT)
 	void *fdt_blob;
 # endif
 # ifdef CONFIG_OF_EMBED
+printf("%s %d\n", __func__, __LINE__);
 	/* Get a pointer to the FDT */
 #  ifdef CONFIG_SPL_BUILD
 	gd->fdt_blob = __dtb_dt_spl_begin;
@@ -1286,26 +1289,33 @@ int fdtdec_setup(void)
 	gd->fdt_blob = (ulong *)&_end;
 
 #    ifdef CONFIG_USING_KERNEL_DTB
+printf("%s %d\n", __func__, __LINE__);
+	printf("%d\n", fdt_totalsize(gd->fdt_blob));
 	gd->fdt_blob_kern = (ulong *)((ulong)gd->fdt_blob +
 					ALIGN(fdt_totalsize(gd->fdt_blob), 8));
 #    endif
 #  endif
 # elif defined(CONFIG_OF_BOARD)
+printf("%s %d\n", __func__, __LINE__);
 	/* Allow the board to override the fdt address. */
 	gd->fdt_blob = board_fdt_blob_setup();
 # elif defined(CONFIG_OF_HOSTFILE)
+printf("%s %d\n", __func__, __LINE__);
 	if (sandbox_read_fdt_from_file()) {
 		puts("Failed to read control FDT\n");
 		return -1;
 	}
 # endif
 # ifndef CONFIG_SPL_BUILD
+printf("%s %d\n", __func__, __LINE__);
 	/* Allow the early environment to override the fdt address */
 	gd->fdt_blob = (void *)env_get_ulong("fdtcontroladdr", 16,
 						(uintptr_t)gd->fdt_blob);
+	gd->fdt_blob_kern = gd->fdt_blob; 
 # endif
 
 # if CONFIG_IS_ENABLED(MULTI_DTB_FIT)
+printf("%s %d\n", __func__, __LINE__);
 	/*
 	 * Try and uncompress the blob.
 	 * Unfortunately there is no way to know how big the input blob really
@@ -1325,6 +1335,7 @@ int fdtdec_setup(void)
 # endif
 #endif
 
+printf("%s %d\n", __func__, __LINE__);
 	return fdtdec_prepare_fdt();
 }
 

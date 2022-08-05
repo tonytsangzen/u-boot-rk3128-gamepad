@@ -140,3 +140,10 @@ config ROCKCHIP_CUBIC_LUT_SIZE
 	default 0
 	help
 	  Used to calc cubic lut size.
+
+config DRM_ROCKCHIP_VIDEO_FRAMEBUFFER
+	bool "Rockchip frame buffer"
+	depends on DRM_ROCKCHIP
+	default 0
+	help 
+		support frame buffer

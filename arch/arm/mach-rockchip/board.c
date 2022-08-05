@@ -446,15 +446,17 @@ int board_init(void)
 #ifdef DEBUG
 	soc_clk_dump();
 #endif
-
+printf("%s %d\n",__func__, __LINE__);
 #ifdef CONFIG_USING_KERNEL_DTB
 #ifdef CONFIG_MTD_BLK
 	board_mtd_blk_map_partitions();
 #endif
+printf("%s %d\n",__func__, __LINE__);
 	init_kernel_dtb();
 #endif
 	early_download();
 
+printf("%s %d\n",__func__, __LINE__);
 	/*
 	 * pmucru isn't referenced on some platforms, so pmucru driver can't
 	 * probe that the "assigned-clocks" is unused.

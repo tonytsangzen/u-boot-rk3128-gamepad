@@ -76,7 +76,8 @@ $(obj)/dt.dtb: $(DTB) $(objtree)/tools/fdtgrep FORCE
 ifneq ($(CONFIG_OF_U_BOOT_REMOVE_PROPS), "")
 	$(call if_changed,fdtgrep_uboot)
 else
-	$(call if_changed,fdtgrep)
+	cp -rf $(DTB) $(obj)/dt.dtb
+	#$(call if_changed,fdtgrep)
 endif
 else
 $(obj)/dt.dtb: $(DTB) FORCE

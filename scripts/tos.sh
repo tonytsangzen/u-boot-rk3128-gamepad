@@ -55,7 +55,7 @@ fi
 LOAD_ADDR=$((DRAM_BASE+LOAD_OFFSET))
 LOAD_ADDR=$(echo "obase=16;${LOAD_ADDR}"|bc) # Convert Dec to Hex
 
-rm trust*.img -f
+rm -f trust*.img
 
 COUNT=`cat ${INI} | wc -l`
 if [ ${COUNT} -eq 1 ]; then

@@ -42,7 +42,7 @@ if [ ! -f ${INI} ]; then
 	exit 0
 fi
 
-rm trust*.img -f
+rm -f trust*.img
 
 COUNT=`cat ${INI} | wc -l`
 if [ ${COUNT} -eq 1 ]; then

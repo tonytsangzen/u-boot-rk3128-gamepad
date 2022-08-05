@@ -25,7 +25,7 @@ while [ $# -gt 0 ]; do
 	esac
 done
 
-rm *_loader_*.bin -f
+rm -f *_loader_*.bin
 
 if [ ! -f ${INI} ]; then
 	echo "pack loader failed! Can't find: ${INI}"

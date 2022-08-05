@@ -428,7 +428,7 @@ u32 nandc_flash_init(void __iomem *nandc_addr)
 {
 	u32 cs;
 
-	rkflash_print_error("...%s enter...\n", __func__);
+	rkflash_print_error("...%s enter1...\n", __func__);
 	g_nand_idb_res_blk_num = MAX_IDB_RESERVED_BLOCK;
 	g_nand_ecc_en = 0;
 
