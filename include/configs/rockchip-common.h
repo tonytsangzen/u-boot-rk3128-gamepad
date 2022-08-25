@@ -141,7 +141,7 @@
 #define BOOT_EWOKOS 1
 #if defined(BOOT_EWOKOS)
 #define RKIMG_BOOTCOMMAND	\
-	"dcache off; fatload mmc 1:1 60100000 kernel7.img; go 60100000"
+	"dcache off;fatload mmc 1:1 60100000 kernel7.img; go 60100000"
 #elif defined(CONFIG_AVB_VBMETA_PUBLIC_KEY_VALIDATE)
 #define RKIMG_BOOTCOMMAND			\
 	"boot_android ${devtype} ${devnum};"

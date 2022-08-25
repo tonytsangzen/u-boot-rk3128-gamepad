@@ -350,18 +350,15 @@ static int connector_panel_init(struct display_state *state)
 	const struct rockchip_panel *panel = panel_state->panel;
 	ofnode dsp_lut_node;
 	int ret, len;
-printf("%s %d\n", __func__, __LINE__);
 	if (!panel)
 		return 0;
 
-printf("%s %d\n", __func__, __LINE__);
 	dsp_lut_node = dev_read_subnode(panel->dev, "dsp-lut");
 	if (!ofnode_valid(dsp_lut_node)) {
 		debug("%s can not find dsp-lut node\n", __func__);
 		return 0;
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	ofnode_get_property(dsp_lut_node, "gamma-lut", &len);
 	if (len > 0) {
 		conn_state->gamma.size = len / sizeof(u32);
@@ -381,7 +378,6 @@ printf("%s %d\n", __func__, __LINE__);
 		panel_state->dsp_lut_node = dsp_lut_node;
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	return 0;
 }
 
@@ -421,7 +417,6 @@ static int display_get_timing_from_dts(struct panel_state *panel_state,
 	int vfront_porch, vback_porch, vsync_len;
 	int val, flags = 0;
 	ofnode timing, native_mode;
-printf("%s %d\n", __func__, __LINE__);
 	timing = dev_read_subnode(panel->dev, "display-timings");
 	if (!ofnode_valid(timing))
 		return -ENODEV;
@@ -436,7 +431,6 @@ printf("%s %d\n", __func__, __LINE__);
 		}
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 #define FDT_GET_INT(val, name) \
 	val = ofnode_read_s32_default(native_mode, name, -1); \
 	if (val < 0) { \
@@ -485,7 +479,6 @@ printf("%s %d\n", __func__, __LINE__);
 	mode->clock = pixelclock / 1000;
 	mode->flags = flags;
 
-printf("%s %d %d\n", __func__, __LINE__, pixelclock);
 	return 0;
 }
 
@@ -709,7 +702,6 @@ static int display_init(struct display_state *state)
 		__print_once = true;
 		printf("Rockchip UBOOT DRM driver version: %s\n", DRIVER_VERSION);
 	}
-printf("%s %d\n", __func__, __LINE__);
 	if (state->is_init)
 		return 0;
 
@@ -730,27 +722,22 @@ printf("%s %d\n", __func__, __LINE__);
 		return -ENODEV;
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	if (crtc_funcs->preinit) {
 		ret = crtc_funcs->preinit(state);
 		if (ret)
 			return ret;
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	if (panel_state->panel)
 		rockchip_panel_init(panel_state->panel);
 
 	if (conn_funcs->init) {
-printf("%s %d\n", __func__, __LINE__);
 		ret = conn_funcs->init(state);
 		if (ret)
 			goto deinit;
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	if (conn_state->phy){
-printf("%s %d\n", __func__, __LINE__);
 		rockchip_phy_init(conn_state->phy);
 	}
 	/*
@@ -768,7 +755,6 @@ printf("%s %d\n", __func__, __LINE__);
 	}
 #endif
 	if (conn_funcs->detect) {
-printf("%s %d\n", __func__, __LINE__);
 		ret = conn_funcs->detect(state);
 #if defined(CONFIG_ROCKCHIP_DRM_TVE) || defined(CONFIG_DRM_ROCKCHIP_RK1000)
 		if (conn_state->type == DRM_MODE_CONNECTOR_HDMIA)
@@ -778,9 +764,7 @@ printf("%s %d\n", __func__, __LINE__);
 			goto deinit;
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	if (panel_state->panel) {
-printf("%s %d\n", __func__, __LINE__);
 		ret = display_get_timing(state);
 		if (!ret)
 			conn_state->bpc = panel_state->panel->bpc;
@@ -801,7 +785,6 @@ printf("%s %d\n", __func__, __LINE__);
 		}
 #endif
 	} else if (conn_state->bridge) {
-printf("%s %d\n", __func__, __LINE__);
 		ret = video_bridge_read_edid(conn_state->bridge->dev,
 					     conn_state->edid, EDID_SIZE);
 		if (ret > 0) {
@@ -817,10 +800,8 @@ printf("%s %d\n", __func__, __LINE__);
 			ret = video_bridge_get_timing(conn_state->bridge->dev);
 		}
 	} else if (conn_funcs->get_timing) {
-printf("%s %d\n", __func__, __LINE__);
 		ret = conn_funcs->get_timing(state);
 	} else if (conn_funcs->get_edid) {
-printf("%s %d\n", __func__, __LINE__);
 		ret = conn_funcs->get_edid(state);
 #if defined(CONFIG_I2C_EDID)
 		if (!ret) {
@@ -835,7 +816,6 @@ printf("%s %d\n", __func__, __LINE__);
 #endif
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	if (ret)
 		goto deinit;
 
@@ -844,7 +824,6 @@ printf("%s %d\n", __func__, __LINE__);
 	if (!strcmp(compatible, "rockchip,rk3568-mipi-dsi"))
 		conn_state->mode.flags |= DRM_MODE_FLAG_PPIXDATA;
 
-printf("%s %d\n", __func__, __LINE__);
 	printf("Detailed mode clock %u kHz, flags[%x]\n"
 	       "    H: %04d %04d %04d %04d\n"
 	       "    V: %04d %04d %04d %04d\n"
@@ -868,7 +847,6 @@ printf("%s %d\n", __func__, __LINE__);
 	}
 	state->is_init = 1;
 
-printf("%s %d\n", __func__, __LINE__);
 	crtc_state->crtc->active = true;
 	memcpy(&crtc_state->crtc->active_mode,
 	       &conn_state->mode, sizeof(struct drm_display_mode));
@@ -1358,7 +1336,6 @@ static struct rockchip_panel *rockchip_of_find_panel(struct udevice *dev)
 	struct udevice *panel_dev;
 	int ret;
 
-printf("%s %d\n", __func__, __LINE__);
 	panel_node = dev_read_subnode(dev, "panel");
 	if (ofnode_valid(panel_node) && ofnode_is_available(panel_node)) {
 		ret = uclass_get_device_by_ofnode(UCLASS_PANEL, panel_node,
@@ -1367,44 +1344,35 @@ printf("%s %d\n", __func__, __LINE__);
 			goto found;
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	ports = dev_read_subnode(dev, "ports");
 	if (!ofnode_valid(ports))
 		return NULL;
 
-printf("%s %d\n", __func__, __LINE__);
 	ofnode_for_each_subnode(port, ports) {
 		u32 reg;
 
-printf("%s %d\n", __func__, __LINE__);
 		if (ofnode_read_u32(port, "reg", &reg))
 			continue;
 
-printf("%s %d\n", __func__, __LINE__);
 		if (reg != PORT_DIR_OUT)
 			continue;
 
-printf("%s %d\n", __func__, __LINE__);
 		ofnode_for_each_subnode(ep, port) {
 			ofnode _ep, _port;
 			uint phandle;
 			bool is_ports_node = false;
 
-printf("%s %d\n", __func__, __LINE__);
 			if (ofnode_read_u32(ep, "remote-endpoint", &phandle))
 				continue;
 
-printf("%s %d %08x\n", __func__, __LINE__, phandle);
 			_ep = ofnode_get_by_phandle(phandle);
 			if (!ofnode_valid(_ep))
 				continue;
 
-printf("%s %d\n", __func__, __LINE__);
 			_port = ofnode_get_parent(_ep);
 			if (!ofnode_valid(_port))
 				continue;
 
-printf("%s %d\n", __func__, __LINE__);
 			port_parent_node = ofnode_get_parent(_port);
 			is_ports_node = strstr(port_parent_node.np->full_name, "ports") ? 1 : 0;
 			if (is_ports_node)
@@ -1414,21 +1382,17 @@ printf("%s %d\n", __func__, __LINE__);
 			if (!ofnode_valid(panel_node))
 				continue;
 
-printf("%s %d\n", __func__, __LINE__);
 			ret = uclass_get_device_by_ofnode(UCLASS_PANEL,
 							  panel_node,
 							  &panel_dev);
-printf("%s %d\n", __func__, __LINE__);
 			if (!ret)
 				goto found;
 		}
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	return NULL;
 
 found:
-printf("%s %d\n", __func__, __LINE__);
 	return (struct rockchip_panel *)dev_get_driver_data(panel_dev);
 }
 
@@ -1438,53 +1402,42 @@ static struct rockchip_bridge *rockchip_of_find_bridge(struct udevice *conn_dev)
 	struct udevice *dev;
 	int ret;
 
-printf("%s %d\n", __func__, __LINE__);
 	ports = dev_read_subnode(conn_dev, "ports");
 	if (!ofnode_valid(ports))
 		return NULL;
 
-printf("%s %d\n", __func__, __LINE__);
 	ofnode_for_each_subnode(port, ports) {
 		u32 reg;
 
-printf("%s %d\n", __func__, __LINE__);
 		if (ofnode_read_u32(port, "reg", &reg))
 			continue;
 
-printf("%s %d\n", __func__, __LINE__);
 		if (reg != PORT_DIR_OUT)
 			continue;
 
-printf("%s %d\n", __func__, __LINE__);
 		ofnode_for_each_subnode(ep, port) {
 			ofnode _ep, _port, _ports;
 			uint phandle;
 
-printf("%s %d\n", __func__, __LINE__);
 			if (ofnode_read_u32(ep, "remote-endpoint", &phandle))
 				continue;
 
-printf("%s %d\n", __func__, __LINE__);
 			_ep = ofnode_get_by_phandle(phandle);
 			if (!ofnode_valid(_ep))
 				continue;
 
-printf("%s %d\n", __func__, __LINE__);
 			_port = ofnode_get_parent(_ep);
 			if (!ofnode_valid(_port))
 				continue;
 
-printf("%s %d\n", __func__, __LINE__);
 			_ports = ofnode_get_parent(_port);
 			if (!ofnode_valid(_ports))
 				continue;
 
-printf("%s %d\n", __func__, __LINE__);
 			node = ofnode_get_parent(_ports);
 			if (!ofnode_valid(node))
 				continue;
 
-printf("%s %d\n", __func__, __LINE__);
 			ret = uclass_get_device_by_ofnode(UCLASS_VIDEO_BRIDGE,
 							  node, &dev);
 			if (!ret)
@@ -1492,11 +1445,9 @@ printf("%s %d\n", __func__, __LINE__);
 		}
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	return NULL;
 
 found:
-printf("%s %d\n", __func__, __LINE__);
 	return (struct rockchip_bridge *)dev_get_driver_data(dev);
 }
 
@@ -1506,36 +1457,29 @@ static struct udevice *rockchip_of_find_connector(ofnode endpoint)
 	uint phandle;
 	struct udevice *dev;
 	int ret;
-	printf("%s %d\n", __func__, __LINE__);
 	if (ofnode_read_u32(endpoint, "remote-endpoint", &phandle))
 		return NULL;
 
-	printf("%s %d %08x\n", __func__, __LINE__, phandle);
 	ep = ofnode_get_by_phandle(phandle);
 	if (!ofnode_valid(ep) || !ofnode_is_available(ep))
 		return NULL;
 
-	printf("%s %d\n", __func__, __LINE__);
 	port = ofnode_get_parent(ep);
 	if (!ofnode_valid(port))
 		return NULL;
 
-	printf("%s %d\n", __func__, __LINE__);
 	ports = ofnode_get_parent(port);
 	if (!ofnode_valid(ports))
 		return NULL;
 
-	printf("%s %d\n", __func__, __LINE__);
 	conn = ofnode_get_parent(ports);
 	if (!ofnode_valid(conn) || !ofnode_is_available(conn))
 		return NULL;
 
-	printf("%s %d\n", __func__, __LINE__);
 	ret = uclass_get_device_by_ofnode(UCLASS_DISPLAY, conn, &dev);
 	if (ret)
 		return NULL;
 
-	printf("%s %d\n", __func__, __LINE__);
 	return dev;
 }
 
@@ -1559,12 +1503,10 @@ static struct rockchip_phy *rockchip_of_find_phy(struct udevice *dev)
 	struct udevice *phy_dev;
 	int ret;
 
-printf("%s %d\n", __func__, __LINE__);
 	ret = uclass_get_device_by_phandle(UCLASS_PHY, dev, "phys", &phy_dev);
 	if (ret)
 		return NULL;
 
-printf("%s %d\n", __func__, __LINE__);
 	return (struct rockchip_phy *)dev_get_driver_data(phy_dev);
 }
 
@@ -1662,7 +1604,6 @@ static int rockchip_display_probe(struct udevice *dev)
 	struct public_phy_data *data;
 	bool is_ports_node = false;
 
-	printf("%s %d\n", __func__, __LINE__);
 #if defined(CONFIG_ROCKCHIP_RK3568)
 	rockchip_display_fixup_dts((void *)blob);
 #endif
@@ -1671,7 +1612,6 @@ static int rockchip_display_probe(struct udevice *dev)
 	if (!(gd->flags & GD_FLG_RELOC))
 		return 0;
 
-printf("%s %d\n", __func__, __LINE__);
 	data = malloc(sizeof(struct public_phy_data));
 	if (!data) {
 		printf("failed to alloc phy data\n");
@@ -1681,7 +1621,6 @@ printf("%s %d\n", __func__, __LINE__);
 
 	init_display_buffer(plat->base);
 
-printf("%s %d\n", __func__, __LINE__);
 	route_node = dev_read_subnode(dev, "route");
 	if (!ofnode_valid(route_node))
 		return -ENODEV;
@@ -1694,7 +1633,6 @@ printf("%s %d\n", __func__, __LINE__);
 			printf("Warn: can't find connect node's handle\n");
 			continue;
 		}
-printf("%s %d %08x\n", __func__, __LINE__, phandle);
 		ep_node = of_find_node_by_phandle(phandle);
 		if (!ofnode_valid(np_to_ofnode(ep_node))) {
 			printf("Warn: can't find endpoint node from phandle\n");
@@ -1706,7 +1644,6 @@ printf("%s %d %08x\n", __func__, __LINE__, phandle);
 			continue;
 		}
 
-printf("%s %d\n", __func__, __LINE__);
 		port_parent_node = of_get_parent(port_node);
 		if (!ofnode_valid(np_to_ofnode(port_parent_node))) {
 			printf("Warn: can't find port parent node from phandle\n");
@@ -1715,7 +1652,6 @@ printf("%s %d\n", __func__, __LINE__);
 
 		is_ports_node = strstr(port_parent_node->full_name, "ports") ? 1 : 0;
 		if (is_ports_node) {
-printf("%s %d\n", __func__, __LINE__);
 			vop_node = of_get_parent(port_parent_node);
 			if (!ofnode_valid(np_to_ofnode(vop_node))) {
 				printf("Warn: can't find crtc node from phandle\n");
@@ -1725,7 +1661,6 @@ printf("%s %d\n", __func__, __LINE__);
 			vop_node = port_parent_node;
 		}
 
-printf("%s %d\n", __func__, __LINE__);
 		ret = uclass_get_device_by_ofnode(UCLASS_VIDEO_CRTC,
 						  np_to_ofnode(vop_node),
 						  &crtc_dev);
@@ -1735,14 +1670,12 @@ printf("%s %d\n", __func__, __LINE__);
 		}
 		crtc = (struct rockchip_crtc *)dev_get_driver_data(crtc_dev);
 
-printf("%s %d\n", __func__, __LINE__);
 		conn_dev = rockchip_of_find_connector(np_to_ofnode(ep_node));
 		if (!conn_dev) {
 			printf("Warn: can't find connect driver\n");
 			continue;
 		}
 
-printf("%s %d\n", __func__, __LINE__);
 		conn = (const struct rockchip_connector *)dev_get_driver_data(conn_dev);
 
 		phy = rockchip_of_find_phy(conn_dev);
@@ -1757,7 +1690,6 @@ printf("%s %d\n", __func__, __LINE__);
 		if (!s)
 			continue;
 
-printf("%s %d\n", __func__, __LINE__);
 		memset(s, 0, sizeof(*s));
 
 		INIT_LIST_HEAD(&s->head);
@@ -1778,7 +1710,6 @@ printf("%s %d\n", __func__, __LINE__);
 		else
 			s->charge_logo_mode = ROCKCHIP_DISPLAY_CENTER;
 
-printf("%s %d\n", __func__, __LINE__);
 		s->blob = blob;
 		s->panel_state.panel = panel;
 		s->conn_state.node = conn_dev->node;
@@ -1796,7 +1727,6 @@ printf("%s %d\n", __func__, __LINE__);
 		s->crtc_state.crtc_id = get_crtc_id(np_to_ofnode(ep_node));
 		s->node = node;
 
-printf("%s %d\n", __func__, __LINE__);
 		if (is_ports_node) { /* only vop2 will get into here */
 			ofnode vp_node = np_to_ofnode(port_node);
 			static bool get_plane_mask_from_dts;
@@ -1834,18 +1764,15 @@ printf("%s %d\n", __func__, __LINE__);
 
 		get_crtc_mcu_mode(&s->crtc_state);
 
-printf("%s %d\n", __func__, __LINE__);
 		ret = ofnode_read_u32_default(s->crtc_state.node,
 					      "rockchip,dual-channel-swap", 0);
 		s->crtc_state.dual_channel_swap = ret;
-printf("%s %d\n", __func__, __LINE__);
 		if (connector_panel_init(s)) {
 			printf("Warn: Failed to init panel drivers\n");
 			free(s);
 			continue;
 		}
 
-printf("%s %d\n", __func__, __LINE__);
 		if (connector_phy_init(s, data)) {
 			printf("Warn: Failed to init phy drivers\n");
 			free(s);
@@ -1854,7 +1781,6 @@ printf("%s %d\n", __func__, __LINE__);
 		list_add_tail(&s->head, &rockchip_display_list);
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	if (list_empty(&rockchip_display_list)) {
 		debug("Failed to found available display route\n");
 		return -ENODEV;
@@ -1862,7 +1788,6 @@ printf("%s %d\n", __func__, __LINE__);
 	rockchip_get_baseparameter();
 	display_pre_init();
 
-printf("%s %d\n", __func__, __LINE__);
 	uc_priv->xsize = DRM_ROCKCHIP_FB_WIDTH;
 	uc_priv->ysize = DRM_ROCKCHIP_FB_HEIGHT;
 	uc_priv->bpix = VIDEO_BPP32;

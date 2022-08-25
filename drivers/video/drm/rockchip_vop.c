@@ -90,30 +90,25 @@ static int rockchip_vop_init_gamma(struct vop *vop, struct display_state *state)
 	int i, lut_len;
 	u32 *lut_regs;
 
-printf("%s %d\n", __func__, __LINE__);
 	if (!conn_state->gamma.lut)
 		return 0;
 
-printf("%s %d\n", __func__, __LINE__);
 	i = dev_read_stringlist_search(crtc_state->dev, "reg-names", "gamma_lut");
 	if (i < 0) {
 		printf("Warning: vop not support gamma\n");
 		return 0;
 	}
-printf("%s %d %d\n", __func__, __LINE__, i);
 	lut_regs = (u32 *)dev_read_addr_size(crtc_state->dev, "reg", &lut_size);
 	if (lut_regs == (u32 *)FDT_ADDR_T_NONE) {
 		printf("failed to get gamma lut register\n");
 		return 0;
 	}
-printf("%s %d %p\n", __func__, __LINE__, lut_regs);
 	lut_len = lut_size / 4;
 	if (lut_len != 256 && lut_len != 1024) {
 		printf("Warning: unsupport gamma lut table[%d]\n", lut_len);
 		return 0;
 	}
 
-printf("%s %d %d\n", __func__, __LINE__, lut_len);
 	if (conn_state->gamma.size != lut_len) {
 		int size = conn_state->gamma.size;
 		u32 j, r, g, b, color;
@@ -132,7 +127,6 @@ printf("%s %d %d\n", __func__, __LINE__, lut_len);
 			writel(lut[i], lut_regs + (i << 2));
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	VOP_CTRL_SET(vop, dsp_lut_en, 1);
 	VOP_CTRL_SET(vop, update_gamma_lut, 1);
 
@@ -217,7 +211,6 @@ static int rockchip_vop_init(struct display_state *state)
 	const struct vop_data *vop_data = crtc->data;
 	struct vop *vop;
 
-printf("%s %d %d\n", __func__, __LINE__, conn_state->type);
 	u16 hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
 	u16 hdisplay = mode->crtc_hdisplay;
 	u16 htotal = mode->crtc_htotal;
@@ -257,7 +250,6 @@ printf("%s %d %d\n", __func__, __LINE__, conn_state->type);
 	vop->win_csc = vop_data->win_csc;
 	vop->version = vop_data->version;
 
-printf("%s %d %d\n", __func__, __LINE__, mode->clock);
 	/* Process 'assigned-{clocks/clock-parents/clock-rates}' properties */
 	ret = clk_set_defaults(crtc_state->dev);
 	if (ret)
@@ -294,7 +286,6 @@ printf("%s %d %d\n", __func__, __LINE__, mode->clock);
 	val |= (mode->flags & DRM_MODE_FLAG_NVSYNC) ? 0 : (1 << 1);
 	VOP_CTRL_SET(vop, pin_pol, val);
 
-printf("%s %d %d\n", __func__, __LINE__, conn_state->type);
 	switch (conn_state->type) {
 	case DRM_MODE_CONNECTOR_LVDS:
 		VOP_CTRL_SET(vop, rgb_en, 1);
@@ -348,12 +339,10 @@ printf("%s %d %d\n", __func__, __LINE__, conn_state->type);
 		printf("unsupport connector_type[%d]\n", conn_state->type);
 	}
 
-printf("%s %d %d\n", __func__, __LINE__, conn_state->output_mode);
 	if (conn_state->output_mode == ROCKCHIP_OUT_MODE_AAAA &&
 	    !(vop_data->feature & VOP_FEATURE_OUTPUT_10BIT))
 		conn_state->output_mode = ROCKCHIP_OUT_MODE_P888;
 
-printf("%s %d %d\n", __func__, __LINE__, conn_state->bus_format);
 	switch (conn_state->bus_format) {
 	case MEDIA_BUS_FMT_RGB565_1X16:
 		val = DITHER_DOWN_EN(1) | DITHER_DOWN_MODE(RGB888_TO_RGB565);
@@ -726,8 +715,6 @@ static int rockchip_vop_set_plane(struct display_state *state)
 	VOP_WIN_SET(vop, dsp_st, dsp_st);
 	VOP_WIN_SET(vop, rb_swap, crtc_state->rb_swap);
 
-printf("%s %d w:%d h:%d x:%d y:%d tw:%d th:%d xm:%d ym:%d\n", __func__, __LINE__, 
-		src_w, src_h, crtc_x, crtc_y, crtc_w, crtc_h, x_mirror, y_mirror);
 
 	VOP_WIN_SET(vop, src_alpha_ctl, 0);
 	rockchip_vop_setup_csc_table(state);
@@ -740,7 +727,6 @@ printf("%s %d w:%d h:%d x:%d y:%d tw:%d th:%d xm:%d ym:%d\n", __func__, __LINE__
 
 static int rockchip_vop_prepare(struct display_state *state)
 {
-printf("%s %d\n", __func__, __LINE__);
 	return 0;
 }
 
@@ -748,7 +734,6 @@ static int rockchip_vop_enable(struct display_state *state)
 {
 	struct crtc_state *crtc_state = &state->crtc_state;
 	struct vop *vop = crtc_state->private;
-printf("%s %d\n", __func__, __LINE__);
 	VOP_CTRL_SET(vop, standby, 0);
 	vop_cfg_done(vop);
 	if (crtc_state->mcu_timing.mcu_pix_total > 0)
@@ -762,7 +747,6 @@ static int rockchip_vop_disable(struct display_state *state)
 	struct crtc_state *crtc_state = &state->crtc_state;
 	struct vop *vop = crtc_state->private;
 
-printf("%s %d\n", __func__, __LINE__);
 	VOP_CTRL_SET(vop, standby, 1);
 	vop_cfg_done(vop);
 	return 0;

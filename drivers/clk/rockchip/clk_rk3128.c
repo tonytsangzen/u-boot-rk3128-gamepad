@@ -55,6 +55,7 @@ static struct rockchip_pll_rate_table rk3128_pll_rates[] = {
 }
 
 static struct rockchip_cpu_rate_table rk3128_cpu_rates[] = {
+	RK3128_CPUCLK_RATE(1296000000, 1, 5),
 	RK3128_CPUCLK_RATE(1200000000, 1, 5),
 	RK3128_CPUCLK_RATE(1008000000, 1, 5),
 	RK3128_CPUCLK_RATE(816000000, 1, 3),
@@ -597,7 +598,7 @@ static ulong rk3128_clk_set_rate(struct clk *clk, ulong rate)
 {
 	struct rk3128_clk_priv *priv = dev_get_priv(clk->dev);
 	ulong ret = 0;
-	printf("rk3128_clk_set_rate id:%ld rate:%ld\n", clk->id, rate);
+
 	switch (clk->id) {
 	case PLL_APLL:
 	case PLL_DPLL:
@@ -661,7 +662,6 @@ static ulong rk3128_clk_set_rate(struct clk *clk, ulong rate)
 	default:
 		return -ENOENT;
 	}
-	printf("%ld\n", ret);
 	return ret;
 }
 

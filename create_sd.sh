@@ -20,11 +20,11 @@ sleep 1
 sudo sudo dd if=uboot.img of=/dev/disk2 seek=16384 bs=512
 sync
 
-sleep 1
-umount ${DISK_PART} 
-sleep 1
-sudo sudo dd if=trust.img of=/dev/disk2 seek=24576 bs=512
-sync
+#sleep 1
+#umount ${DISK_PART} 
+#sleep 1
+#sudo sudo dd if=trust.img of=/dev/disk2 seek=24576 bs=512
+#sync
 
 
 umount ${DISK_PART} 

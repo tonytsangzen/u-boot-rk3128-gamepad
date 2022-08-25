@@ -168,18 +168,15 @@ static int rockchip_lvds_connector_enable(struct display_state *state)
 	struct crtc_state *crtc_state = &state->crtc_state;
 	int pipe = crtc_state->crtc_id;
 	int ret;
-printf("%s %d\n", __func__, __LINE__);
 	if (lvds->funcs->enable)
 		lvds->funcs->enable(lvds, pipe);
 
-printf("%s %d\n", __func__, __LINE__);
 	ret = rockchip_phy_set_mode(lvds->phy, PHY_MODE_VIDEO_LVDS);
 	if (ret) {
 		dev_err(lvds->dev, "failed to set phy mode: %d\n", ret);
 		return ret;
 	}
 
-printf("%s %d\n", __func__, __LINE__);
 	rockchip_phy_power_on(lvds->phy);
 
 	return 0;
@@ -255,7 +252,6 @@ static const struct rockchip_connector px30_lvds_driver_data = {
 static void rk3126_lvds_enable(struct rockchip_lvds *lvds, int pipe)
 {
 
-	printf("%s %d %p\n", __func__, __LINE__, lvds->grf);
 	regmap_write(lvds->grf, RK3126_GRF_LVDS_CON0,
 		     RK3126_LVDS_P2S_EN(1) | RK3126_LVDS_MODE_EN(1) |
 		     RK3126_LVDS_MSBSEL(1) | RK3126_LVDS_SELECT(lvds->format));

@@ -344,7 +344,6 @@ static void panel_simple_enable(struct rockchip_panel *panel)
 	struct rockchip_panel_plat *plat = dev_get_platdata(panel->dev);
 	struct rockchip_panel_priv *priv = dev_get_priv(panel->dev);
 
-	printf("%s %d\n", __func__, __LINE__);
 	if (priv->enabled)
 		return;
 
@@ -396,7 +395,6 @@ static int rockchip_panel_ofdata_to_platdata(struct udevice *dev)
 	const void *data;
 	int len = 0;
 	int ret;
-	printf("%s %d\n", __func__, __LINE__);
 
 	plat->power_invert = dev_read_bool(dev, "power-invert");
 
@@ -455,7 +453,6 @@ static int rockchip_panel_probe(struct udevice *dev)
 	struct rockchip_panel *panel;
 	int ret;
 	const char *cmd_type;
-	printf("%s %d\n", __func__, __LINE__);
 	ret = gpio_request_by_name(dev, "enable-gpios", 0,
 				   &priv->enable_gpio, GPIOD_IS_OUT);
 	if (ret && ret != -ENOENT) {
@@ -530,7 +527,6 @@ static int rockchip_panel_probe(struct udevice *dev)
 	panel->bpc = plat->bpc;
 	panel->funcs = &rockchip_panel_funcs;
 
-	printf("%s %d\n", __func__, __LINE__);
 	return 0;
 }
 

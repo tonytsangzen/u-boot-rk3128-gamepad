@@ -60,7 +60,7 @@
 			reg = <0x000>;
 			operating-points = <
 				/* KHz    uV */
-				 816000 1000000
+				 1200000 1300000
 			>;
 			#cooling-cells = <2>; /* min followed by max */
 			clock-latency = <40000>;

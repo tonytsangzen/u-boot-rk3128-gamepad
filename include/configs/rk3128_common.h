@@ -60,10 +60,14 @@
 	"kernel_addr_r=0x62008000\0" \
 	"ramdisk_addr_r=0x6a200000\0"
 
+#define TEST \
+	"t=\'dcache off;icache off; loadx 60100000; go 60100000\'\0"
+
 #include <config_distro_bootcmd.h>
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	ENV_MEM_LAYOUT_SETTINGS \
 	ENV_MEM_LAYOUT_SETTINGS1 \
+	TEST \
 	"partitions=" PARTS_DEFAULT \
 	ROCKCHIP_DEVICE_SETTINGS \
 	RKIMG_DET_BOOTDEV \
